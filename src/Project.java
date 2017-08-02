@@ -1,22 +1,11 @@
 import java.util.ArrayList;
 
-public class Project {
+public class Project extends Task{
 
-    int currentXP;
-    int maxXP;
-    ArrayList<Task> taskList = new ArrayList<Task>();
+    String description;
 
-    public void updateXP(){
-        int tempCurrXP = 0;
-        int tempMaxXP = 0;
-
-        for (Task task : taskList){
-            int[] tempXP = task.updateXP();
-            tempCurrXP =+ tempXP[0];
-            tempMaxXP =+ tempXP[1];
-        }
-        currentXP = tempCurrXP;
-        maxXP = tempMaxXP;
+    public Project(String name, String inDescription){
+        super(name,0);
     }
 
 
