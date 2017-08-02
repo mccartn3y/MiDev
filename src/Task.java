@@ -1,8 +1,10 @@
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
 
-public class Task {
+public class Task implements Serializable {
     /*
     The Task class hold the name and XP of a given task. It can also have aubtasks assigned to it.
     If subtasks are assigned then the XP is calculated as the sum of the subtask XP.
@@ -11,9 +13,10 @@ public class Task {
     private String name;
     private int XP;
     private int maxXP;
-    private ArrayList<Task> subTasks;
+    private HashMap< String,Task> subTasks = new HashMap<String, Task>();
     private boolean completed = false;
     private Date compDate;
+    private Date createDate = new Date();
 
     public Task(String inName, int inXP){
         name = inName;
@@ -29,7 +32,7 @@ public class Task {
                 return 0;
             }
         }else{
-            for (Task item : subTasks) currXP += item.getCurrXP();
+            for (Map.Entry<String, Task> entry : subTasks.entrySet()) currXP += entry.getValue().getCurrXP();
         }
         return currXP;
     }
@@ -39,14 +42,14 @@ public class Task {
         if(subTasks.isEmpty()){
             return maxXP;
         }else{
-            for (Task item : subTasks) tempXP += item.getMaxXP();
+            for (Map.Entry<String, Task> entry : subTasks.entrySet()) tempXP += entry.getValue().getMaxXP();
         }
         return tempXP;
     }
 
     //Sub takss can be added individually or by passing in a map of strings and ints
     public void addSubTask(String inName, int inXP){
-        subTasks.add(new Task(inName, inXP));
+        subTasks.put(inName, new Task(inName, inXP));
         this.updateXP();
     }
 
@@ -69,7 +72,7 @@ public class Task {
         return this.updateXP();
     }
 
-    public void printTask() {
+    public void print() {
         if (subTasks.isEmpty()) {
             if (completed) {
                 System.out.println(String.format("Task: %s XP: %d Status: \u2713 (%tc)", name, XP, compDate));
@@ -77,8 +80,10 @@ public class Task {
                 System.out.println(String.format("Task: %s XP: %d Status: \u274C", name, XP));
             }
         } else {
-            for (Task item : subTasks) {
-                item.printTask();
+            for (Map.Entry<String, Task> entry : subTasks.entrySet()) {
+                System.out.println(name);
+                entry.getValue().updateXP();
+                entry.getValue().print();
             }
         }
     }
@@ -89,10 +94,22 @@ public class Task {
             compDate = new Date();
             XP = maxXP;
         }else{
-            for(Task item : subTasks){
-                item.completeTask();
+            for(Map.Entry<String, Task> entry : subTasks.entrySet()){
+                entry.getValue().completeTask();
             }
         }
+    }
+
+    public String getName(){
+        return name;
+    }
+
+    public Map<String, Task> getSubTasks(){
+        return subTasks;
+    }
+
+    public void removeSubTask(String taskName){
+        subTasks.remove(taskName);
     }
 
 }
